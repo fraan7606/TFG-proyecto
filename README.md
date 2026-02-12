@@ -1,34 +1,34 @@
-# RosTectic - Sistema de Gestión de Citas para Salón de Estética
+﻿# RosTectic - Sistema de Gestión de Citas para Salón de Estética
 
 Sistema completo de gestión de citas para salones de estética, desarrollado con Flutter (frontend) y Node.js (backend).
 
 ---
 
-## 📋 Índice
+## Índice
 
-1. [Características](#-características)
-2. [Tecnologías Utilizadas](#-tecnologías-utilizadas)
-3. [Requisitos del Sistema](#-requisitos-del-sistema)
-4. [Estructura del Proyecto](#-estructura-del-proyecto)
-5. [Instalación y Configuración](#-instalación-y-configuración)
-6. [Guía de Lanzamiento](#-guía-de-lanzamiento)
-7. [Verificación](#-verificación)
-
----
-
-## 🚀 Características
-
-- 📱 **Multiplataforma**: Web, Android e iOS con Flutter
-- 🔐 **Autenticación dual**: Login con email o teléfono
-- 📧 **Notificaciones inteligentes**: Email o SMS según método de registro
-- 📅 **Gestión de citas**: Calendario interactivo para reservas
-- ⭐ **Sistema de reseñas**: Valoraciones y comentarios
-- 📦 **Gestión de inventario**: Control de productos y stock
-- 📊 **Panel de administración**: Estadísticas y gestión completa
+1. [Características](#características)
+2. [Tecnologías Utilizadas](#tecnologías-utilizadas)
+3. [Requisitos del Sistema](#requisitos-del-sistema)
+4. [Estructura del Proyecto](#estructura-del-proyecto)
+5. [Instalación y Configuración](#instalación-y-configuración)
+6. [Guía de Lanzamiento](#guía-de-lanzamiento)
+7. [Verificación](#verificación)
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## Características
+
+-  **Multiplataforma**: Web, Android e iOS con Flutter
+-  **Autenticación dual**: Login con email o teléfono
+-  **Notificaciones inteligentes**: Email o SMS según método de registro
+-  **Gestión de citas**: Calendario interactivo para reservas
+-  **Sistema de reseñas**: Valoraciones y comentarios
+-  **Gestión de inventario**: Control de productos y stock
+-  **Panel de administración**: Estadísticas y gestión completa
+
+---
+
+## Tecnologías Utilizadas
 
 ### Backend (Node.js)
 El backend es una API REST desarrollada con las siguientes tecnologías:
@@ -62,7 +62,7 @@ La aplicación móvil y web está desarrollada con:
 
 ---
 
-## 💻 Requisitos del Sistema
+## Requisitos del Sistema
 
 ### Para Desarrollo
 
@@ -103,7 +103,7 @@ O bien:
 
 ---
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 TFG/
@@ -124,7 +124,7 @@ TFG/
 │   ├── .env.example               # Ejemplo de variables de entorno
 │   └── .env                       # Variables de entorno (NO commitear)
 │
-├── rostectic-app/                 # 📱 Frontend (Flutter)
+├── rostectic-app/                 #  Frontend (Flutter)
 │   ├── lib/
 │   │   ├── main.dart              # Punto de entrada de Flutter
 │   │   ├── config/
@@ -152,7 +152,7 @@ TFG/
 
 ---
 
-## 🚀 Instalación y Configuración
+## Instalación y Configuración
 
 ### Paso 1: Clonar el Repositorio
 
@@ -238,7 +238,7 @@ TWILIO_PHONE_NUMBER=+1234567890
 FRONTEND_URL=http://localhost:8080
 ```
 
-**⚠️ Importante**: 
+** Importante**: 
 - Cambia `TU_PASSWORD` por tu contraseña real de PostgreSQL
 - Cambia `JWT_SECRET` por una clave segura aleatoria
 - Las credenciales de SendGrid y Twilio son opcionales para empezar
@@ -295,7 +295,7 @@ class ApiConfig {
 
 ---
 
-## 🏃 Guía de Lanzamiento
+## Guía de Lanzamiento
 
 Tienes **3 opciones** para lanzar el proyecto:
 
@@ -324,7 +324,7 @@ npm run dev
 
 Salida esperada:
 ```
-🚀 Servidor RosTectic corriendo en http://localhost:3000
+ Servidor RosTectic corriendo en http://localhost:3000
 📝 Entorno: development
 ```
 
@@ -338,7 +338,7 @@ flutter run -d chrome
 Salida esperada:
 ```
 Launching lib/main.dart on Chrome in debug mode...
-✓ Built build/web
+ Built build/web
 ```
 
 #### Frontend (Móvil - Android)
@@ -354,7 +354,7 @@ O para iOS (solo Mac):
 flutter run -d ios
 ```
 
-### Opción 3: Scripts Individuales 📦
+### Opción 3: Scripts Individuales 
 
 ```bash
 # Solo Backend
@@ -369,7 +369,7 @@ ejecutar_frontend_web.bat
 
 ---
 
-## ✅ Verificación
+## Verificación
 
 ### Backend Funcionando
 
@@ -403,7 +403,7 @@ ejecutar_frontend_web.bat
 
 ---
 
-## 🐛 Solución de Problemas Comunes
+## Solución de Problemas Comunes
 
 ### Backend
 
@@ -440,7 +440,7 @@ ejecutar_frontend_web.bat
 
 ---
 
-## 📚 Comandos Útiles
+## Comandos Útiles
 
 ### Backend
 
@@ -483,9 +483,9 @@ flutter pub get
 
 ---
 
-## 🎯 Estado del Proyecto
+## Estado del Proyecto
 
-### ✅ Completado
+###  Completado
 - [x] Estructura del proyecto
 - [x] Configuración de base de datos
 - [x] Esquema de Prisma
@@ -500,7 +500,7 @@ flutter pub get
 - [ ] Calendario interactivo
 - [ ] Sistema de notificaciones
 
-### 📋 Pendiente
+###  Pendiente
 - [ ] Sistema de reseñas
 - [ ] Panel de administración
 - [ ] Gestión de inventario
@@ -508,19 +508,19 @@ flutter pub get
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 Este proyecto está bajo la Licencia MIT.
 
 ---
 
-## 👤 Autor
+## Autor
 
 Proyecto desarrollado como Trabajo de Fin de Grado (TFG)
 
 ---
 
-## 📞 Soporte
+## Soporte
 
 Si encuentras algún problema:
 1. Verifica que todos los requisitos estén instalados
@@ -530,4 +530,5 @@ Si encuentras algún problema:
 
 ---
 
-**¡Listo! Ahora tienes RosTectic funcionando en tu máquina. 🎉**
+**¡Listo! Ahora tienes RosTectic funcionando en tu máquina. **
+
