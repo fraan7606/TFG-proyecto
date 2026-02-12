@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:8080',
+  origin: true, // Permite cualquier origen en desarrollo (necesario para Flutter Web)
   credentials: true
 }));
 app.use(express.json());
@@ -29,17 +29,19 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Importar rutas (las crearemos después)
-// import authRoutes from './routes/auth.routes.js';
+// Importar rutas
+import authRoutes from './routes/auth.routes.js';
 // import userRoutes from './routes/user.routes.js';
-// import serviceRoutes from './routes/service.routes.js';
-// import appointmentRoutes from './routes/appointment.routes.js';
+import serviceRoutes from './routes/service.routes.js';
+import appointmentRoutes from './routes/appointment.routes.js';
+import specialistRoutes from './routes/specialist.routes.js';
 
 // Usar rutas
-// app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 // app.use('/api/users', userRoutes);
-// app.use('/api/services', serviceRoutes);
-// app.use('/api/appointments', appointmentRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/specialists', specialistRoutes);
 
 // Manejo de errores
 app.use((err, req, res, next) => {

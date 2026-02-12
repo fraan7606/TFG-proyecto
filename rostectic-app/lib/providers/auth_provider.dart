@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../services/api_service.dart';
 import '../models/user_model.dart';
+import '../config/api_config.dart';
 
 class AuthProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
@@ -31,13 +32,21 @@ class AuthProvider with ChangeNotifier {
     _error = null;
 
     try {
-      // TODO: Implementar llamada a API
-      await Future.delayed(const Duration(seconds: 1)); // Simulación
+      final response = await _apiService.post(ApiConfig.register, {
+        'name': name,
+        'email': email,
+        'password': password,
+        'role': 'CLIENT',
+      });
+
+      final data = _apiService.handleResponse(response);
+      await _apiService.saveToken(data['token']);
+      _user = User.fromJson(data['data']['user']);
       
       _setLoading(false);
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceFirst('Exception: Error: ', '');
       _setLoading(false);
       return false;
     }
@@ -53,13 +62,21 @@ class AuthProvider with ChangeNotifier {
     _error = null;
 
     try {
-      // TODO: Implementar llamada a API
-      await Future.delayed(const Duration(seconds: 1)); // Simulación
+      final response = await _apiService.post(ApiConfig.register, {
+        'name': name,
+        'phone': phone,
+        'password': password,
+        'role': 'CLIENT',
+      });
+
+      final data = _apiService.handleResponse(response);
+      await _apiService.saveToken(data['token']);
+      _user = User.fromJson(data['data']['user']);
       
       _setLoading(false);
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceFirst('Exception: Error: ', '');
       _setLoading(false);
       return false;
     }
@@ -74,13 +91,19 @@ class AuthProvider with ChangeNotifier {
     _error = null;
 
     try {
-      // TODO: Implementar llamada a API
-      await Future.delayed(const Duration(seconds: 1)); // Simulación
+      final response = await _apiService.post(ApiConfig.login, {
+        'email': email,
+        'password': password,
+      });
+
+      final data = _apiService.handleResponse(response);
+      await _apiService.saveToken(data['token']);
+      _user = User.fromJson(data['data']['user']);
       
       _setLoading(false);
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceFirst('Exception: Error: ', '');
       _setLoading(false);
       return false;
     }
@@ -95,13 +118,19 @@ class AuthProvider with ChangeNotifier {
     _error = null;
 
     try {
-      // TODO: Implementar llamada a API
-      await Future.delayed(const Duration(seconds: 1)); // Simulación
+      final response = await _apiService.post(ApiConfig.login, {
+        'phone': phone,
+        'password': password,
+      });
+
+      final data = _apiService.handleResponse(response);
+      await _apiService.saveToken(data['token']);
+      _user = User.fromJson(data['data']['user']);
       
       _setLoading(false);
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceFirst('Exception: Error: ', '');
       _setLoading(false);
       return false;
     }

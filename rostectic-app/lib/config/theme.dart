@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Colores principales del salón de estética
-  static const Color primaryColor = Color(0xFFE91E63); // Rosa elegante
-  static const Color secondaryColor = Color(0xFF9C27B0); // Púrpura
-  static const Color accentColor = Color(0xFFFF4081); // Rosa vibrante
-  static const Color backgroundColor = Color(0xFFFAFAFA);
+  // Colores principales del salón de estética (Premium Teal/Petrol)
+  static const Color primaryColor = Color(0xFF1E878F); // Teal elegante
+  static const Color secondaryColor = Color(0xFF264653); // Azul petróleo oscuro
+  static const Color accentColor = Color(0xFF2A9D8F); // Teal vibrante
+  static const Color backgroundColor = Color(0xFFF9FAFB);
   static const Color surfaceColor = Colors.white;
-  static const Color errorColor = Color(0xFFD32F2F);
+  static const Color errorColor = Color(0xFFE76F51); // Coral suave
   
   // Colores de texto
   static const Color textPrimary = Color(0xFF212121);
@@ -115,7 +115,7 @@ class AppTheme {
     ),
     
     // Cards
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: surfaceColor,
       elevation: 2,
       shape: RoundedRectangleBorder(

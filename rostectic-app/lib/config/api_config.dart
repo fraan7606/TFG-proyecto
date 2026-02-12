@@ -3,11 +3,8 @@ class ApiConfig {
   static const String baseUrl = 'http://localhost:3000/api';
   
   // Endpoints de autenticación
-  static const String registerEmail = '/auth/register/email';
-  static const String registerPhone = '/auth/register/phone';
-  static const String loginEmail = '/auth/login/email';
-  static const String loginPhone = '/auth/login/phone';
-  static const String verifyOtp = '/auth/verify-otp';
+  static const String register = '/auth/register';
+  static const String login = '/auth/login';
   static const String refreshToken = '/auth/refresh';
   static const String logout = '/auth/logout';
   

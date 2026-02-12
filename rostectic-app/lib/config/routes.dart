@@ -3,6 +3,8 @@ import '../screens/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/home/home_screen.dart';
+import '../screens/booking/booking_screen.dart';
+import '../screens/admin/manage_specialists_screen.dart';
 
 class AppRoutes {
   // Nombres de rutas
@@ -10,6 +12,8 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
+  static const String booking = '/booking';
+  static const String manageSpecialists = '/manage-specialists';
   
   // Mapa de rutas
   static Map<String, WidgetBuilder> routes = {
@@ -17,5 +21,7 @@ class AppRoutes {
     login: (context) => const LoginScreen(),
     register: (context) => const RegisterScreen(),
     home: (context) => const HomeScreen(),
+    booking: (context) => const BookingScreen(),
+    manageSpecialists: (context) => const ManageSpecialistsScreen(),
   };
 }
