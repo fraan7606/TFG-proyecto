@@ -4,6 +4,7 @@ import 'config/theme.dart';
 import 'config/routes.dart';
 import 'providers/auth_provider.dart';
 import 'providers/booking_provider.dart';
+import 'providers/appointment_provider.dart';
 
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -22,6 +23,7 @@ class RosTecticApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => BookingProvider()),
+        ChangeNotifierProvider(create: (_) => AppointmentProvider()),
       ],
       child: MaterialApp(
         title: 'RosTectic',

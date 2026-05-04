@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/booking_provider.dart';
+import '../../providers/appointment_provider.dart';
 import '../../config/routes.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Cargar datos al iniciar
+    Future.microtask(() {
+      context.read<AppointmentProvider>().fetchUserAppointments();
+      context.read<BookingProvider>().fetchServices();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +56,8 @@ class HomeScreen extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 900),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,10 +74,11 @@ class HomeScreen extends StatelessWidget {
                       isAdmin
                           ? 'Bienvenido, Administrador ${user?.name}'
                           : 'Bienvenido ${user?.name}, a RosTectic',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: Colors.grey[700],
-                            fontSize: 18,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: Colors.grey[700],
+                                fontSize: 18,
+                              ),
                     ),
                     const SizedBox(height: 40),
 
@@ -115,19 +135,25 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.history_outlined,
                   title: 'Mis Citas',
                   color: Theme.of(context).colorScheme.secondary,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.appointments);
+                  },
                 ),
                 _QuickActionCard(
                   icon: Icons.spa_outlined,
                   title: 'Servicios',
                   color: Colors.teal,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.services);
+                  },
                 ),
                 _QuickActionCard(
                   icon: Icons.person_outline,
                   title: 'Mi Perfil',
                   color: Colors.orange,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.profile);
+                  },
                 ),
               ],
             );
@@ -144,13 +170,30 @@ class HomeScreen extends StatelessWidget {
                   ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.appointments);
+              },
               child: const Text('Ver todas'),
             ),
           ],
         ),
         const SizedBox(height: 16),
-        _buildEmptyState(context, 'No tienes citas programadas'),
+        Consumer<AppointmentProvider>(
+          builder: (context, appointmentProvider, _) {
+            final upcoming = appointmentProvider.upcomingAppointments;
+
+            if (upcoming.isEmpty) {
+              return _buildEmptyState(context, 'No tienes citas programadas');
+            }
+
+            // Mostrar las primeras 3 citas
+            return Column(
+              children: upcoming.take(3).map((appointment) {
+                return _buildAppointmentPreview(context, appointment);
+              }).toList(),
+            );
+          },
+        ),
       ],
     );
   }
@@ -181,7 +224,8 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.people_outline,
                   title: 'Gestionar Perfiles',
                   color: Colors.blue,
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.manageSpecialists),
+                  onTap: () =>
+                      Navigator.pushNamed(context, AppRoutes.manageSpecialists),
                 ),
                 _QuickActionCard(
                   icon: Icons.event_note_outlined,
@@ -215,6 +259,33 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: 16),
         _buildEmptyState(context, 'No hay citas para hoy'),
       ],
+    );
+  }
+
+  Widget _buildAppointmentPreview(BuildContext context, appointment) {
+    final dateFormat = DateFormat('d MMM yyyy', 'es_ES');
+    final timeFormat = DateFormat('HH:mm', 'es_ES');
+    final date = dateFormat.format(appointment.scheduledAt);
+    final time = timeFormat.format(appointment.scheduledAt);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        leading: Icon(
+          Icons.calendar_today_outlined,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        title: Text(appointment.serviceName ?? 'Servicio'),
+        subtitle: Text('$date • $time'),
+        trailing: Icon(
+          Icons.arrow_forward_ios_outlined,
+          size: 16,
+          color: Colors.grey[400],
+        ),
+        onTap: () {
+          Navigator.pushNamed(context, AppRoutes.appointments);
+        },
+      ),
     );
   }
 
