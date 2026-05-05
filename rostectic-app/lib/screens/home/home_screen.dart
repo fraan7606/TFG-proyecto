@@ -38,7 +38,8 @@ class HomeScreen extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 900),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,10 +56,11 @@ class HomeScreen extends StatelessWidget {
                       isAdmin
                           ? 'Bienvenido, Administrador ${user?.name}'
                           : 'Bienvenido ${user?.name}, a RosTectic',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: Colors.grey[700],
-                            fontSize: 18,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: Colors.grey[700],
+                                fontSize: 18,
+                              ),
                     ),
                     const SizedBox(height: 40),
 
@@ -115,13 +117,15 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.history_outlined,
                   title: 'Mis Citas',
                   color: Theme.of(context).colorScheme.secondary,
-                  onTap: () {},
+                  onTap: () =>
+                      Navigator.pushNamed(context, AppRoutes.myAppointments),
                 ),
                 _QuickActionCard(
                   icon: Icons.spa_outlined,
                   title: 'Servicios',
                   color: Colors.teal,
-                  onTap: () {},
+                  onTap: () =>
+                      Navigator.pushNamed(context, AppRoutes.servicesCatalog),
                 ),
                 _QuickActionCard(
                   icon: Icons.person_outline,
@@ -181,13 +185,15 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.people_outline,
                   title: 'Gestionar Perfiles',
                   color: Colors.blue,
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.manageSpecialists),
+                  onTap: () =>
+                      Navigator.pushNamed(context, AppRoutes.manageSpecialists),
                 ),
                 _QuickActionCard(
                   icon: Icons.event_note_outlined,
                   title: 'Todas las Citas',
                   color: Colors.purple,
-                  onTap: () {},
+                  onTap: () =>
+                      Navigator.pushNamed(context, AppRoutes.myAppointments),
                 ),
                 _QuickActionCard(
                   icon: Icons.inventory_2_outlined,
@@ -199,7 +205,7 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.analytics_outlined,
                   title: 'Reportes',
                   color: Colors.green,
-                  onTap: () {},
+                  onTap: () => Navigator.pushNamed(context, AppRoutes.reports),
                 ),
               ],
             );

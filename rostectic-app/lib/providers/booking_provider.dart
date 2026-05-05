@@ -34,7 +34,9 @@ class BookingProvider with ChangeNotifier {
 
   void _fetchInitialSpecialists() async {
     // Inicializar con "Cualquiera" siempre disponible
-    _specialists = [Specialist(id: '0', name: 'Cualquiera', role: 'Disponible')];
+    _specialists = [
+      Specialist(id: '0', name: 'Cualquiera', role: 'Disponible')
+    ];
     _selectedSpecialist = _specialists[0];
     await fetchSpecialists();
   }
@@ -53,24 +55,26 @@ class BookingProvider with ChangeNotifier {
   // Cargar especialistas desde API
   Future<void> fetchSpecialists() async {
     try {
-      final response = await _apiService.get('/api/specialists', requiresAuth: false);
+      final response =
+          await _apiService.get('/specialists', requiresAuth: false);
       final data = _apiService.handleResponse(response);
-      
-      final List<Specialist> apiSpecialists = (data['data']['specialists'] as List)
-          .map((s) => Specialist(
-                id: s['id'],
-                name: s['name'],
-                role: s['role'],
-                imageUrl: s['imageUrl'],
-              ))
-          .toList();
-      
+
+      final List<Specialist> apiSpecialists =
+          (data['data']['specialists'] as List)
+              .map((s) => Specialist(
+                    id: s['id'],
+                    name: s['name'],
+                    role: s['role'],
+                    imageUrl: s['imageUrl'],
+                  ))
+              .toList();
+
       // Combinar "Cualquiera" con los de la API
       _specialists = [
         Specialist(id: '0', name: 'Cualquiera', role: 'Disponible'),
         ...apiSpecialists,
       ];
-      
+
       notifyListeners();
     } catch (e) {
       print('Error cargando especialistas: $e');
@@ -79,19 +83,19 @@ class BookingProvider with ChangeNotifier {
 
   // Getters categorizados
   List<String> get morningSlots => _availableSlots.where((s) {
-    final hour = int.parse(s.split(':')[0]);
-    return hour < 12;
-  }).toList();
+        final hour = int.parse(s.split(':')[0]);
+        return hour < 12;
+      }).toList();
 
   List<String> get noonSlots => _availableSlots.where((s) {
-    final hour = int.parse(s.split(':')[0]);
-    return hour >= 12 && hour < 15;
-  }).toList();
+        final hour = int.parse(s.split(':')[0]);
+        return hour >= 12 && hour < 15;
+      }).toList();
 
   List<String> get afternoonSlots => _availableSlots.where((s) {
-    final hour = int.parse(s.split(':')[0]);
-    return hour >= 15;
-  }).toList();
+        final hour = int.parse(s.split(':')[0]);
+        return hour >= 15;
+      }).toList();
 
   // Cargar servicios
   Future<void> fetchServices() async {
@@ -100,13 +104,14 @@ class BookingProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _apiService.get(ApiConfig.services, requiresAuth: false);
+      final response =
+          await _apiService.get(ApiConfig.services, requiresAuth: false);
       final data = _apiService.handleResponse(response);
-      
+
       _services = (data['data']['services'] as List)
           .map((s) => Service.fromJson(s))
           .toList();
-      
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -156,12 +161,11 @@ class BookingProvider with ChangeNotifier {
       final dateStr = DateFormat('yyyy-MM-dd').format(_selectedDate);
       // Por ahora el backend ignora el especialista, pero lo preparamos
       final response = await _apiService.get(
-        '${ApiConfig.appointments}/slots?date=$dateStr&serviceId=${_selectedService!.id}'
-      );
-      
+          '${ApiConfig.appointments}/slots?date=$dateStr&serviceId=${_selectedService!.id}');
+
       final data = _apiService.handleResponse(response);
       _availableSlots = List<String>.from(data['data']['slots']);
-      
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -189,12 +193,16 @@ class BookingProvider with ChangeNotifier {
       final dateStr = DateFormat('yyyy-MM-dd').format(_selectedDate);
       final scheduledAt = DateTime.parse('${dateStr}T$_selectedTime:00Z');
 
-      await _apiService.post(ApiConfig.appointments, {
-        'serviceId': _selectedService!.id,
-        'scheduledAt': scheduledAt.toIso8601String(),
-        'notes': 'Especialista: ${_selectedSpecialist?.name ?? "Cualquiera"}',
-      }, requiresAuth: true);
-      
+      await _apiService.post(
+          ApiConfig.appointments,
+          {
+            'serviceId': _selectedService!.id,
+            'scheduledAt': scheduledAt.toIso8601String(),
+            'notes':
+                'Especialista: ${_selectedSpecialist?.name ?? "Cualquiera"}',
+          },
+          requiresAuth: true);
+
       _isLoading = false;
       notifyListeners();
       return true;

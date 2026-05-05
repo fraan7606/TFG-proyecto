@@ -7,7 +7,8 @@ class ManageSpecialistsScreen extends StatefulWidget {
   const ManageSpecialistsScreen({super.key});
 
   @override
-  State<ManageSpecialistsScreen> createState() => _ManageSpecialistsScreenState();
+  State<ManageSpecialistsScreen> createState() =>
+      _ManageSpecialistsScreenState();
 }
 
 class _ManageSpecialistsScreenState extends State<ManageSpecialistsScreen> {
@@ -28,49 +29,60 @@ class _ManageSpecialistsScreenState extends State<ManageSpecialistsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () => _showSpecialistDialog(context),
+            onPressed: _isSaving ? null : () => _showSpecialistDialog(context),
           ),
         ],
       ),
-      body: Consumer<BookingProvider>(
-        builder: (context, provider, child) {
-          // Filtrar "Cualquiera" para la gestión
-          final list = provider.specialists.where((s) => s.id != '0').toList();
-          
-          if (list.isEmpty) {
-            return const Center(
-              child: Text('No hay especialistas registrados.'),
-            );
-          }
+      body: Stack(
+        children: [
+          Consumer<BookingProvider>(
+            builder: (context, provider, child) {
+              // Filtrar "Cualquiera" para la gestión
+              final list =
+                  provider.specialists.where((s) => s.id != '0').toList();
 
-          return ListView.builder(
-            itemCount: list.length,
-            padding: const EdgeInsets.all(16),
-            itemBuilder: (context, index) {
-              final specialist = list[index];
-              return Card(
-                child: ListTile(
-                  leading: const CircleAvatar(child: Icon(Icons.person)),
-                  title: Text(specialist.name),
-                  subtitle: Text(specialist.role ?? 'Sin rol'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () => _showSpecialistDialog(context, specialist: specialist),
+              if (list.isEmpty) {
+                return const Center(
+                  child: Text('No hay especialistas registrados.'),
+                );
+              }
+
+              return ListView.builder(
+                itemCount: list.length,
+                padding: const EdgeInsets.all(16),
+                itemBuilder: (context, index) {
+                  final specialist = list[index];
+                  return Card(
+                    child: ListTile(
+                      leading: const CircleAvatar(child: Icon(Icons.person)),
+                      title: Text(specialist.name),
+                      subtitle: Text(specialist.role ?? 'Sin rol'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: _isSaving
+                                ? null
+                                : () => _showSpecialistDialog(context,
+                                    specialist: specialist),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: _isSaving
+                                ? null
+                                : () => _confirmDelete(context, specialist),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _confirmDelete(context, specialist),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               );
             },
-          );
-        },
+          ),
+          if (_isSaving) const LinearProgressIndicator(),
+        ],
       ),
     );
   }
@@ -82,7 +94,8 @@ class _ManageSpecialistsScreenState extends State<ManageSpecialistsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(specialist == null ? 'Nuevo Especialista' : 'Editar Especialista'),
+        title: Text(
+            specialist == null ? 'Nuevo Especialista' : 'Editar Especialista'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -93,7 +106,8 @@ class _ManageSpecialistsScreenState extends State<ManageSpecialistsScreen> {
             const SizedBox(height: 16),
             TextField(
               controller: roleController,
-              decoration: const InputDecoration(labelText: 'Rol (Ej: Esteticista)'),
+              decoration:
+                  const InputDecoration(labelText: 'Rol (Ej: Esteticista)'),
             ),
           ],
         ),
@@ -105,25 +119,31 @@ class _ManageSpecialistsScreenState extends State<ManageSpecialistsScreen> {
           ElevatedButton(
             onPressed: () async {
               if (nameController.text.isEmpty) return;
-              
+
               Navigator.pop(context);
               setState(() => _isSaving = true);
-              
+
               try {
                 if (specialist == null) {
                   // Crear
-                  await _apiService.post('/api/specialists', {
-                    'name': nameController.text,
-                    'role': roleController.text,
-                  }, requiresAuth: true);
+                  await _apiService.post(
+                      '/specialists',
+                      {
+                        'name': nameController.text,
+                        'role': roleController.text,
+                      },
+                      requiresAuth: true);
                 } else {
                   // Editar
-                  await _apiService.put('/api/specialists/${specialist.id}', {
-                    'name': nameController.text,
-                    'role': roleController.text,
-                  }, requiresAuth: true);
+                  await _apiService.put(
+                      '/specialists/${specialist.id}',
+                      {
+                        'name': nameController.text,
+                        'role': roleController.text,
+                      },
+                      requiresAuth: true);
                 }
-                
+
                 if (mounted) {
                   context.read<BookingProvider>().fetchSpecialists();
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -152,7 +172,8 @@ class _ManageSpecialistsScreenState extends State<ManageSpecialistsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Eliminar Especialista'),
-        content: Text('¿Estás seguro de que quieres eliminar a ${specialist.name}?'),
+        content:
+            Text('¿Estás seguro de que quieres eliminar a ${specialist.name}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -162,7 +183,8 @@ class _ManageSpecialistsScreenState extends State<ManageSpecialistsScreen> {
             onPressed: () async {
               Navigator.pop(context);
               try {
-                await _apiService.delete('/api/specialists/${specialist.id}', requiresAuth: true);
+                await _apiService.delete('/specialists/${specialist.id}',
+                    requiresAuth: true);
                 if (mounted) {
                   context.read<BookingProvider>().fetchSpecialists();
                   ScaffoldMessenger.of(context).showSnackBar(

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/intl.dart';
 import '../../providers/booking_provider.dart';
-import '../../models/service_model.dart';
 
 class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});
@@ -31,7 +29,8 @@ class _BookingScreenState extends State<BookingScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: _currentStep > 0 ? _prevStep : () => Navigator.pop(context),
+          onPressed:
+              _currentStep > 0 ? _prevStep : () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
@@ -43,7 +42,7 @@ class _BookingScreenState extends State<BookingScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isWide = constraints.maxWidth > 900;
-          
+
           return Row(
             children: [
               // Contenido Principal
@@ -66,7 +65,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   ],
                 ),
               ),
-              
+
               // Sidebar "Tu Pedido" (Solo en pantallas anchas)
               if (isWide && _currentStep > 0)
                 Container(
@@ -75,25 +74,32 @@ class _BookingScreenState extends State<BookingScreen> {
                     border: Border(left: BorderSide(color: Colors.grey[200]!)),
                     color: const Color(0xFFF9FAFB),
                   ),
-                  child: const _BookingSummarySidebar(),
+                  child: _BookingSummarySidebar(onContinue: _nextStep),
                 ),
             ],
           );
         },
       ),
       // Resumen inferior para móvil
-      bottomNavigationBar: MediaQuery.of(context).size.width <= 900 && _currentStep > 0
-          ? const _MobileBookingSummary()
-          : null,
+      bottomNavigationBar:
+          MediaQuery.of(context).size.width <= 900 && _currentStep > 0
+              ? _MobileBookingSummary(onContinue: _nextStep)
+              : null,
     );
   }
 
   Widget _buildStepHeader() {
     String title = '';
     switch (_currentStep) {
-      case 0: title = 'Seleccionar servicio'; break;
-      case 1: title = 'Seleccionar fecha y hora'; break;
-      case 2: title = 'Confirmar reserva'; break;
+      case 0:
+        title = 'Seleccionar servicio';
+        break;
+      case 1:
+        title = 'Seleccionar fecha y hora';
+        break;
+      case 2:
+        title = 'Confirmar reserva';
+        break;
     }
 
     return Padding(
@@ -117,7 +123,9 @@ class _BookingScreenState extends State<BookingScreen> {
                   height: 4,
                   margin: EdgeInsets.only(right: index < 2 ? 8 : 0),
                   decoration: BoxDecoration(
-                    color: isActive ? Theme.of(context).colorScheme.primary : Colors.grey[200],
+                    color: isActive
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.grey[200],
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -154,7 +162,9 @@ class _BookingScreenState extends State<BookingScreen> {
 
 // --- SIDEBAR RESUMEN (WEB/TABLET) ---
 class _BookingSummarySidebar extends StatelessWidget {
-  const _BookingSummarySidebar();
+  final VoidCallback onContinue;
+
+  const _BookingSummarySidebar({required this.onContinue});
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +176,8 @@ class _BookingSummarySidebar extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Tu pedido', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const Text('Tu pedido',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 24),
               if (service != null)
                 Container(
@@ -174,37 +185,58 @@ class _BookingSummarySidebar extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.05), blurRadius: 10)
+                    ],
                   ),
                   child: Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(child: Text(service.name, style: const TextStyle(fontWeight: FontWeight.w600))),
-                          Text('${service.price}€', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Expanded(
+                              child: Text(service.name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600))),
+                          Text('${service.price}€',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                       const SizedBox(height: 4),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: Text('${service.durationMinutes}min', style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                        child: Text('${service.durationMinutes}min',
+                            style: TextStyle(
+                                color: Colors.grey[500], fontSize: 12)),
                       ),
                       const Divider(height: 24),
-                      const Text('Empleado disponible', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                      const Text('Empleado disponible',
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 12),
                       Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor: provider.selectedSpecialist?.id == '0' ? Colors.grey[200] : Theme.of(context).colorScheme.primary,
-                            child: const Icon(Icons.person, color: Colors.white),
+                            backgroundColor:
+                                provider.selectedSpecialist?.id == '0'
+                                    ? Colors.grey[200]
+                                    : Theme.of(context).colorScheme.primary,
+                            child:
+                                const Icon(Icons.person, color: Colors.white),
                           ),
                           const SizedBox(width: 12),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(provider.selectedSpecialist?.name ?? 'Cualquiera', style: const TextStyle(fontSize: 14)),
-                              Text(provider.selectedSpecialist?.role ?? '', style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                              Text(
+                                  provider.selectedSpecialist?.name ??
+                                      'Cualquiera',
+                                  style: const TextStyle(fontSize: 14)),
+                              Text(provider.selectedSpecialist?.role ?? '',
+                                  style: TextStyle(
+                                      color: Colors.grey[500], fontSize: 12)),
                             ],
                           ),
                         ],
@@ -219,18 +251,18 @@ class _BookingSummarySidebar extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Total', style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text('${service?.price ?? 0} €', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                    const Text('Total',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('${service?.price ?? 0} €',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18)),
                   ],
                 ),
               ),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: provider.selectedTime != null ? () {
-                    // Si ya estamos en el último paso, confirmamos
-                    // En este sidebar solo mostramos el botón si es web
-                  } : null,
+                  onPressed: provider.selectedTime != null ? onContinue : null,
                   child: const Text('Continuar'),
                 ),
               ),
@@ -244,7 +276,9 @@ class _BookingSummarySidebar extends StatelessWidget {
 
 // --- RESUMEN MOVIL (BOTTOM) ---
 class _MobileBookingSummary extends StatelessWidget {
-  const _MobileBookingSummary();
+  final VoidCallback onContinue;
+
+  const _MobileBookingSummary({required this.onContinue});
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +288,9 @@ class _MobileBookingSummary extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)
+            ],
           ),
           child: Row(
             children: [
@@ -262,15 +298,16 @@ class _MobileBookingSummary extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Total', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                  Text('${provider.selectedService?.price ?? 0} €', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text('Total',
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                  Text('${provider.selectedService?.price ?? 0} €',
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
               const Spacer(),
               ElevatedButton(
-                onPressed: provider.selectedTime != null ? () {
-                   // Accion de continuar manejada por el PageView o similar
-                } : null,
+                onPressed: provider.selectedTime != null ? onContinue : null,
                 child: const Text('Continuar'),
               ),
             ],
@@ -290,8 +327,9 @@ class _ServiceSelectionStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<BookingProvider>(
       builder: (context, provider, child) {
-        if (provider.isLoading) return const Center(child: CircularProgressIndicator());
-        
+        if (provider.isLoading)
+          return const Center(child: CircularProgressIndicator());
+
         return ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           itemCount: provider.services.length,
@@ -311,16 +349,24 @@ class _ServiceSelectionStep extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(service.name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                          Text(service.name,
+                              style: const TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
-                          Text(service.description ?? '', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                          Text(service.description ?? '',
+                              style: TextStyle(
+                                  color: Colors.grey[600], fontSize: 14)),
                           const SizedBox(height: 8),
-                          Text('${service.durationMinutes} min', style: TextStyle(color: Colors.grey[500], fontSize: 13)),
+                          Text('${service.durationMinutes} min',
+                              style: TextStyle(
+                                  color: Colors.grey[500], fontSize: 13)),
                         ],
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Text('${service.price} €', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                    Text('${service.price} €',
+                        style: const TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -358,7 +404,8 @@ class _DateTimeSelectionStepState extends State<_DateTimeSelectionStep> {
                 firstDay: DateTime.now(),
                 lastDay: DateTime.now().add(const Duration(days: 90)),
                 focusedDay: _focusedDay,
-                selectedDayPredicate: (day) => isSameDay(provider.selectedDate, day),
+                selectedDayPredicate: (day) =>
+                    isSameDay(provider.selectedDate, day),
                 onDaySelected: (selectedDay, focusedDay) {
                   setState(() => _focusedDay = focusedDay);
                   provider.selectDate(selectedDay);
@@ -366,7 +413,8 @@ class _DateTimeSelectionStepState extends State<_DateTimeSelectionStep> {
                 headerStyle: const HeaderStyle(
                   formatButtonVisible: false,
                   titleCentered: false,
-                  titleTextStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  titleTextStyle:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 calendarBuilders: CalendarBuilders(
                   markerBuilder: (context, date, events) {
@@ -374,8 +422,10 @@ class _DateTimeSelectionStepState extends State<_DateTimeSelectionStep> {
                     // En una app real, esto vendría de una API
                     final day = date.day;
                     Color markerColor = Colors.transparent;
-                    if (day % 3 == 0) markerColor = Colors.green;
-                    else if (day % 4 == 0) markerColor = Colors.orange;
+                    if (day % 3 == 0)
+                      markerColor = Colors.green;
+                    else if (day % 4 == 0)
+                      markerColor = Colors.orange;
                     else if (day % 5 == 0) markerColor = Colors.amber;
 
                     if (markerColor == Colors.transparent) return null;
@@ -394,47 +444,67 @@ class _DateTimeSelectionStepState extends State<_DateTimeSelectionStep> {
                   },
                 ),
                 calendarStyle: CalendarStyle(
-                  selectedDecoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
-                  todayDecoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withOpacity(0.1), shape: BoxShape.circle, border: Border.all(color: Theme.of(context).colorScheme.primary)),
-                  todayTextStyle: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
+                  selectedDecoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: BoxShape.circle),
+                  todayDecoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.primary)),
+                  todayTextStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold),
                   outsideDaysVisible: false,
-                  defaultDecoration: const BoxDecoration(shape: BoxShape.circle),
-                  weekendDecoration: const BoxDecoration(shape: BoxShape.circle),
+                  defaultDecoration:
+                      const BoxDecoration(shape: BoxShape.circle),
+                  weekendDecoration:
+                      const BoxDecoration(shape: BoxShape.circle),
                 ),
                 daysOfWeekStyle: const DaysOfWeekStyle(
                   weekdayStyle: TextStyle(color: Colors.grey),
                   weekendStyle: TextStyle(color: Colors.grey),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              const Text('Empleados disponibles', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Empleados disponibles',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: provider.specialists.map((spec) => _SpecialistAvatar(
-                    specialist: spec,
-                    isSelected: provider.selectedSpecialist?.id == spec.id,
-                    onTap: () => provider.selectSpecialist(spec),
-                  )).toList(),
+                  children: provider.specialists
+                      .map((spec) => _SpecialistAvatar(
+                            specialist: spec,
+                            isSelected:
+                                provider.selectedSpecialist?.id == spec.id,
+                            onTap: () => provider.selectSpecialist(spec),
+                          ))
+                      .toList(),
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Secciones de tiempo
-              _TimeSectionTitle(title: 'Mañana', count: provider.morningSlots.length),
+              _TimeSectionTitle(
+                  title: 'Mañana', count: provider.morningSlots.length),
               _buildSlotGrid(context, provider.morningSlots, provider),
-              
+
               const SizedBox(height: 24),
-              _TimeSectionTitle(title: 'Mediodía', count: provider.noonSlots.length),
+              _TimeSectionTitle(
+                  title: 'Mediodía', count: provider.noonSlots.length),
               _buildSlotGrid(context, provider.noonSlots, provider),
-              
+
               const SizedBox(height: 24),
-              _TimeSectionTitle(title: 'Tarde', count: provider.afternoonSlots.length),
+              _TimeSectionTitle(
+                  title: 'Tarde', count: provider.afternoonSlots.length),
               _buildSlotGrid(context, provider.afternoonSlots, provider),
-              
+
               const SizedBox(height: 32),
             ],
           ),
@@ -443,9 +513,14 @@ class _DateTimeSelectionStepState extends State<_DateTimeSelectionStep> {
     );
   }
 
-  Widget _buildSlotGrid(BuildContext context, List<String> slots, BookingProvider provider) {
-    if (slots.isEmpty) return const Padding(padding: EdgeInsets.only(top: 8), child: Text('No disponible', style: TextStyle(color: Colors.grey, fontSize: 13)));
-    
+  Widget _buildSlotGrid(
+      BuildContext context, List<String> slots, BookingProvider provider) {
+    if (slots.isEmpty)
+      return const Padding(
+          padding: EdgeInsets.only(top: 8),
+          child: Text('No disponible',
+              style: TextStyle(color: Colors.grey, fontSize: 13)));
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -467,15 +542,23 @@ class _DateTimeSelectionStepState extends State<_DateTimeSelectionStep> {
           child: Container(
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.05) : const Color(0xFFF3F4F6),
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary.withOpacity(0.05)
+                  : const Color(0xFFF3F4F6),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent, width: 2),
+              border: Border.all(
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.transparent,
+                  width: 2),
             ),
             child: Text(
               time,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: isSelected ? Theme.of(context).colorScheme.primary : Colors.black,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.black,
               ),
             ),
           ),
@@ -490,7 +573,10 @@ class _SpecialistAvatar extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _SpecialistAvatar({required this.specialist, required this.isSelected, required this.onTap});
+  const _SpecialistAvatar(
+      {required this.specialist,
+      required this.isSelected,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -506,13 +592,16 @@ class _SpecialistAvatar extends StatelessWidget {
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: Colors.grey[200],
-                  child: const Icon(Icons.person, color: Colors.white, size: 30),
+                  child:
+                      const Icon(Icons.person, color: Colors.white, size: 30),
                 ),
                 if (isSelected)
                   Container(
                     padding: const EdgeInsets.all(2),
-                    decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
-                    child: const Icon(Icons.check, size: 14, color: Colors.white),
+                    decoration: const BoxDecoration(
+                        color: Colors.green, shape: BoxShape.circle),
+                    child:
+                        const Icon(Icons.check, size: 14, color: Colors.white),
                   ),
               ],
             ),
@@ -541,9 +630,11 @@ class _TimeSectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+        Text(title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
         const SizedBox(width: 8),
-        Text('($count)', style: TextStyle(color: Colors.grey[500], fontSize: 13)),
+        Text('($count)',
+            style: TextStyle(color: Colors.grey[500], fontSize: 13)),
       ],
     );
   }
@@ -562,7 +653,8 @@ class _ConfirmationFinalStep extends StatelessWidget {
               const Spacer(),
               const Icon(Icons.verified, size: 100, color: Colors.green),
               const SizedBox(height: 32),
-              const Text('¡Todo listo!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              const Text('¡Todo listo!',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               const Text(
                 'Confirma los detalles de tu cita antes de finalizar.',
@@ -599,7 +691,8 @@ class _ConfirmationFinalStep extends StatelessWidget {
       context: context,
       isDismissible: false,
       enableDrag: false,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => Container(
         padding: const EdgeInsets.all(32),
         child: Column(
@@ -607,14 +700,18 @@ class _ConfirmationFinalStep extends StatelessWidget {
           children: [
             const Icon(Icons.check_circle, color: Colors.green, size: 64),
             const SizedBox(height: 24),
-            const Text('¡Cita Confirmada!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('¡Cita Confirmada!',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            const Text('Te hemos enviado un email con los detalles de tu reserva.', textAlign: TextAlign.center),
+            const Text(
+                'Te hemos enviado un email con los detalles de tu reserva.',
+                textAlign: TextAlign.center),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+                onPressed: () =>
+                    Navigator.of(context).popUntil((route) => route.isFirst),
                 child: const Text('Aceptar'),
               ),
             ),
