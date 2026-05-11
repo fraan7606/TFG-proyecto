@@ -35,6 +35,9 @@ import authRoutes from './routes/auth.routes.js';
 import serviceRoutes from './routes/service.routes.js';
 import appointmentRoutes from './routes/appointment.routes.js';
 import specialistRoutes from './routes/specialist.routes.js';
+import productRoutes from './routes/product.routes.js';
+import blockedSlotRoutes from './routes/blocked-slot.routes.js';
+import saleRoutes from './routes/sale.routes.js';
 
 // Usar rutas
 app.use('/api/auth', authRoutes);
@@ -42,6 +45,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/specialists', specialistRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/blocked-slots', blockedSlotRoutes);
+app.use('/api/sales', saleRoutes);
 
 // Manejo de errores
 app.use((err, req, res, next) => {

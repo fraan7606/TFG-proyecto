@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (success && mounted) {
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
+      Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -76,26 +76,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Título
                     Text(
                       'Bienvenido',
                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onBackground,
-                      ),
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 12),
                     Text(
                       'Inicia sesión para continuar',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                            color: Colors.grey[600],
+                          ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
-                    
+
                     // Toggle Email/Phone
                     Container(
                       decoration: BoxDecoration(
@@ -116,14 +116,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: _LoginTypeButton(
                               label: 'Teléfono',
                               isSelected: !_isEmailLogin,
-                              onTap: () => setState(() => _isEmailLogin = false),
+                              onTap: () =>
+                                  setState(() => _isEmailLogin = false),
                             ),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Email/Phone Input
                     TextFormField(
                       controller: _emailController,
@@ -133,7 +134,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: InputDecoration(
                         labelText: _isEmailLogin ? 'Email' : 'Teléfono',
                         prefixIcon: Icon(
-                          _isEmailLogin ? Icons.email_outlined : Icons.phone_outlined,
+                          _isEmailLogin
+                              ? Icons.email_outlined
+                              : Icons.phone_outlined,
                         ),
                       ),
                       validator: (value) {
@@ -144,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Password Input
                     TextFormField(
                       controller: _passwordController,
@@ -159,7 +162,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 : Icons.visibility_off_outlined,
                           ),
                           onPressed: () {
-                            setState(() => _obscurePassword = !_obscurePassword);
+                            setState(
+                                () => _obscurePassword = !_obscurePassword);
                           },
                         ),
                       ),
@@ -171,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Login Button
                     Consumer<AuthProvider>(
                       builder: (context, auth, child) {
@@ -194,13 +198,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                 )
                               : const Text(
                                   'Iniciar Sesión',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ),
                         );
                       },
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Register Link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

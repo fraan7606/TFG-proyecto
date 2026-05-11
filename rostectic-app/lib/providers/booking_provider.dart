@@ -28,6 +28,10 @@ class BookingProvider with ChangeNotifier {
   List<Specialist> _specialists = [];
   Specialist? _selectedSpecialist;
 
+  // Datos del cliente
+  String? _clientName;
+  String? _clientPhone;
+
   BookingProvider() {
     _fetchInitialSpecialists();
   }
@@ -51,6 +55,8 @@ class BookingProvider with ChangeNotifier {
   Specialist? get selectedSpecialist => _selectedSpecialist;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  String? get clientName => _clientName;
+  String? get clientPhone => _clientPhone;
 
   // Cargar especialistas desde API
   Future<void> fetchSpecialists() async {
@@ -159,9 +165,11 @@ class BookingProvider with ChangeNotifier {
 
     try {
       final dateStr = DateFormat('yyyy-MM-dd').format(_selectedDate);
-      // Por ahora el backend ignora el especialista, pero lo preparamos
+      final specialistParam = _selectedSpecialist != null
+          ? '&specialistId=${_selectedSpecialist!.id}'
+          : '';
       final response = await _apiService.get(
-          '${ApiConfig.appointments}/slots?date=$dateStr&serviceId=${_selectedService!.id}');
+          '${ApiConfig.appointments}/slots?date=$dateStr&serviceId=${_selectedService!.id}$specialistParam');
 
       final data = _apiService.handleResponse(response);
       _availableSlots = List<String>.from(data['data']['slots']);
@@ -181,6 +189,13 @@ class BookingProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Establecer datos del cliente
+  void setClientInfo({required String name, required String phone}) {
+    _clientName = name;
+    _clientPhone = phone;
+    notifyListeners();
+  }
+
   // Crear cita
   Future<bool> bookAppointment() async {
     if (_selectedService == null || _selectedTime == null) return false;
@@ -191,15 +206,20 @@ class BookingProvider with ChangeNotifier {
 
     try {
       final dateStr = DateFormat('yyyy-MM-dd').format(_selectedDate);
-      final scheduledAt = DateTime.parse('${dateStr}T$_selectedTime:00Z');
+      final scheduledAtStr = '${dateStr}T$_selectedTime:00';
+
+      final notes =
+          'Especialista: ${_selectedSpecialist?.name ?? "Cualquiera"}\n'
+          'Cliente: $_clientName\n'
+          'Teléfono: $_clientPhone';
 
       await _apiService.post(
           ApiConfig.appointments,
           {
             'serviceId': _selectedService!.id,
-            'scheduledAt': scheduledAt.toIso8601String(),
-            'notes':
-                'Especialista: ${_selectedSpecialist?.name ?? "Cualquiera"}',
+            'scheduledAt': scheduledAtStr,
+            'specialistId': _selectedSpecialist?.id ?? '0',
+            'notes': notes,
           },
           requiresAuth: true);
 

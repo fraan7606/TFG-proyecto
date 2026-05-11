@@ -58,6 +58,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         children: [
                           _ServiceSelectionStep(onNext: _nextStep),
                           _DateTimeSelectionStep(onNext: _nextStep),
+                          _ClientInfoStep(onNext: _nextStep),
                           _ConfirmationFinalStep(),
                         ],
                       ),
@@ -98,6 +99,9 @@ class _BookingScreenState extends State<BookingScreen> {
         title = 'Seleccionar fecha y hora';
         break;
       case 2:
+        title = 'Tus datos';
+        break;
+      case 3:
         title = 'Confirmar reserva';
         break;
     }
@@ -138,7 +142,7 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   void _nextStep() {
-    if (_currentStep < 2) {
+    if (_currentStep < 3) {
       setState(() => _currentStep++);
       _pageController.animateToPage(
         _currentStep,
@@ -534,16 +538,16 @@ class _DateTimeSelectionStepState extends State<_DateTimeSelectionStep> {
       itemBuilder: (context, index) {
         final time = slots[index];
         final isSelected = provider.selectedTime == time;
+
         return InkWell(
           onTap: () {
             provider.selectTime(time);
-            // Si es movil, mostrar scroll o boton continuar
           },
           child: Container(
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: isSelected
-                  ? Theme.of(context).colorScheme.primary.withOpacity(0.05)
+                  ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
                   : const Color(0xFFF3F4F6),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
@@ -640,7 +644,118 @@ class _TimeSectionTitle extends StatelessWidget {
   }
 }
 
-// --- PASO 3: CONFIRMACION FINAL ---
+// --- PASO 3: DATOS DEL CLIENTE ---
+class _ClientInfoStep extends StatefulWidget {
+  final VoidCallback onNext;
+  const _ClientInfoStep({required this.onNext});
+
+  @override
+  State<_ClientInfoStep> createState() => _ClientInfoStepState();
+}
+
+class _ClientInfoStepState extends State<_ClientInfoStep> {
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<BookingProvider>(
+      builder: (context, provider, child) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                const Text(
+                  'Completa tus datos',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Necesitamos esta información para confirmar tu cita',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 32),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Nombre completo *',
+                    hintText: 'Ej: Juan García',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    prefixIcon: const Icon(Icons.person_outline),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'El nombre es requerido';
+                    }
+                    if (value.length < 3) {
+                      return 'El nombre debe tener al menos 3 caracteres';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _phoneController,
+                  decoration: InputDecoration(
+                    labelText: 'Teléfono *',
+                    hintText: 'Ej: 612345678',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    prefixIcon: const Icon(Icons.phone_outlined),
+                  ),
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'El teléfono es requerido';
+                    }
+                    if (value.length < 9) {
+                      return 'El teléfono debe tener al menos 9 dígitos';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 48),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        provider.setClientInfo(
+                          name: _nameController.text,
+                          phone: _phoneController.text,
+                        );
+                        widget.onNext();
+                      }
+                    },
+                    child: const Text('Continuar'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// --- PASO 4: CONFIRMACION FINAL ---
 class _ConfirmationFinalStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

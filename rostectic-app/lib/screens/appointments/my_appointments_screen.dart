@@ -29,6 +29,12 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
         .toList();
   }
 
+  void _refreshAppointments() {
+    setState(() {
+      _appointmentsFuture = _fetchAppointments();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,16 +73,23 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
           return ListView(
             padding: const EdgeInsets.all(24),
             children: [
-              _AppointmentsSummary(total: appointments.length, upcoming: upcoming.length),
+              _AppointmentsSummary(
+                  total: appointments.length, upcoming: upcoming.length),
               const SizedBox(height: 24),
               if (upcoming.isNotEmpty) ...[
                 const _SectionTitle('Próximas citas'),
-                ...upcoming.map((item) => _AppointmentCard(appointment: item)),
+                ...upcoming.map((item) => _AppointmentCard(
+                      appointment: item,
+                      onDeleted: _refreshAppointments,
+                    )),
               ],
               if (past.isNotEmpty) ...[
                 const SizedBox(height: 24),
                 const _SectionTitle('Historial'),
-                ...past.map((item) => _AppointmentCard(appointment: item)),
+                ...past.map((item) => _AppointmentCard(
+                      appointment: item,
+                      onDeleted: _refreshAppointments,
+                    )),
               ],
             ],
           );
@@ -133,15 +146,67 @@ class _AppointmentsSummary extends StatelessWidget {
   }
 }
 
-class _AppointmentCard extends StatelessWidget {
+class _AppointmentCard extends StatefulWidget {
   final Appointment appointment;
+  final VoidCallback onDeleted;
 
-  const _AppointmentCard({required this.appointment});
+  const _AppointmentCard({required this.appointment, required this.onDeleted});
+
+  @override
+  State<_AppointmentCard> createState() => _AppointmentCardState();
+}
+
+class _AppointmentCardState extends State<_AppointmentCard> {
+  final ApiService _apiService = ApiService();
+  bool _isDeleting = false;
+
+  Future<void> _deleteAppointment() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cancelar cita'),
+        content: const Text('¿Estás seguro de que deseas cancelar esta cita?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('No'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Sí, cancelar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      setState(() => _isDeleting = true);
+      try {
+        await _apiService
+            .delete('${ApiConfig.appointments}/${widget.appointment.id}');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Cita cancelada correctamente')),
+          );
+          // Llamar al callback para recargar
+          widget.onDeleted();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error al cancelar: $e')),
+          );
+          setState(() => _isDeleting = false);
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final formatter = DateFormat('EEEE d MMMM · HH:mm', 'es_ES');
-    final isUpcoming = appointment.scheduledAt.isAfter(DateTime.now());
+    final isUpcoming = widget.appointment.scheduledAt.isAfter(DateTime.now());
 
     return Card(
       margin: const EdgeInsets.only(bottom: 14),
@@ -152,7 +217,9 @@ class _AppointmentCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isUpcoming ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.12),
+                color: isUpcoming
+                    ? Colors.green.withOpacity(0.1)
+                    : Colors.grey.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(
@@ -166,17 +233,30 @@ class _AppointmentCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    appointment.service.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    widget.appointment.service.name,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 4),
-                  Text(formatter.format(appointment.scheduledAt)),
+                  Text(formatter.format(widget.appointment.scheduledAt)),
                   const SizedBox(height: 6),
-                  Text('${appointment.service.durationMinutes} min · ${appointment.service.price.toStringAsFixed(2)} €'),
+                  Text(
+                      '${widget.appointment.service.durationMinutes} min · ${widget.appointment.service.price.toStringAsFixed(2)} €'),
                 ],
               ),
             ),
-            Chip(label: Text(appointment.status)),
+            if (_isDeleting)
+              const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                onPressed: _deleteAppointment,
+                tooltip: 'Cancelar cita',
+              ),
           ],
         ),
       ),
@@ -195,7 +275,10 @@ class _SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Text(
         text,
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+        style: Theme.of(context)
+            .textTheme
+            .titleLarge
+            ?.copyWith(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -206,7 +289,8 @@ class _StateMessage extends StatelessWidget {
   final String title;
   final String message;
 
-  const _StateMessage({required this.icon, required this.title, required this.message});
+  const _StateMessage(
+      {required this.icon, required this.title, required this.message});
 
   @override
   Widget build(BuildContext context) {

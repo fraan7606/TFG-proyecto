@@ -58,14 +58,15 @@ model Appointment {
 }
 
 model Specialist {
-  id           String        @id @default(uuid())
-  name         String
-  role         String?
-  imageUrl     String?       @map("image_url")
-  active       Boolean       @default(true)
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
-  appointments Appointment[]
+  id               String             @id @default(uuid())
+  name             String
+  role             String?
+  imageUrl         String?            @map("image_url")
+  active           Boolean            @default(true)
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+  appointments     Appointment[]
+  blockedTimeSlots BlockedTimeSlot[]
 
   @@map("specialists")
 }
@@ -91,12 +92,49 @@ model Product {
   description     String?
   stockQuantity   Int              @map("stock_quantity")
   price           Decimal          @db.Decimal(10, 2)
-  minStockAlert   Int              @default(5) @map("min_stock_alert")
+  minStockAlert   Int?             @map("min_stock_alert")
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @updatedAt @map("updated_at")
   serviceProducts ServiceProduct[]
+  saleItems       SaleItem[]
 
   @@map("products")
+}
+
+model Sale {
+  id        String     @id @default(uuid())
+  date      DateTime   @default(now())
+  total     Decimal    @db.Decimal(10, 2)
+  notes     String?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  items     SaleItem[]
+
+  @@map("sales")
+}
+
+model SaleItem {
+  id        String   @id @default(uuid())
+  saleId    String   @map("sale_id")
+  productId String   @map("product_id")
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  sale      Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("sale_items")
+}
+
+model BlockedTimeSlot {
+  id           String      @id @default(uuid())
+  startsAt     DateTime    @map("starts_at")
+  endsAt       DateTime    @map("ends_at")
+  reason       String?
+  specialistId String?     @map("specialist_id")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  specialist   Specialist? @relation(fields: [specialistId], references: [id], onDelete: SetNull)
+
+  @@map("blocked_time_slots")
 }
 
 model ServiceProduct {

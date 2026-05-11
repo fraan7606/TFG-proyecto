@@ -8,7 +8,7 @@ const SLOT_INTERVAL = 15; // Intervalos de 15 minutos para empezar
 
 export const getAvailableSlots = async (req, res, next) => {
     try {
-        const { date, serviceId } = req.query;
+        const { date, serviceId, specialistId } = req.query;
 
         if (!date || !serviceId) {
             return res.status(400).json({ message: 'Se requiere fecha y ID de servicio' });
@@ -23,17 +23,24 @@ export const getAvailableSlots = async (req, res, next) => {
         const startOfSelectedDay = startOfDay(selectedDate);
         const endOfSelectedDay = endOfDay(selectedDate);
 
-        // 1. Obtener citas existentes para ese día
-        const appointments = await prisma.appointment.findMany({
-            where: {
-                scheduledAt: {
-                    gte: startOfSelectedDay,
-                    lte: endOfSelectedDay
-                },
-                status: {
-                    in: ['PENDING', 'CONFIRMED']
-                }
+        // 1. Obtener citas existentes para ese día y especialista específico
+        const whereClause = {
+            scheduledAt: {
+                gte: startOfSelectedDay,
+                lte: endOfSelectedDay
             },
+            status: {
+                in: ['PENDING', 'CONFIRMED']
+            }
+        };
+
+        // Si se especifica un especialista, filtrar solo sus citas
+        if (specialistId && specialistId !== '0') {
+            whereClause.specialistId = specialistId;
+        }
+
+        const appointments = await prisma.appointment.findMany({
+            where: whereClause,
             include: { service: true }
         });
 
@@ -84,7 +91,7 @@ export const getAvailableSlots = async (req, res, next) => {
 
 export const createAppointment = async (req, res, next) => {
     try {
-        const { serviceId, scheduledAt, notes } = req.body;
+        const { serviceId, scheduledAt, notes, specialistId } = req.body;
         const userId = req.user.id; // Del middleware de autenticación
 
         // Validar si el slot sigue disponible
@@ -92,33 +99,40 @@ export const createAppointment = async (req, res, next) => {
         const appointmentDate = parseISO(scheduledAt);
         const appointmentEnd = addMinutes(appointmentDate, service.durationMinutes);
 
-        const overlap = await prisma.appointment.findFirst({
-            where: {
-                status: { in: ['PENDING', 'CONFIRMED'] },
-                OR: [
-                    {
-                        scheduledAt: {
-                            lt: appointmentEnd,
-                            gte: appointmentDate
-                        }
-                    }
-                ]
+        // Validar solapamiento solo para el especialista específico
+        const overlapWhere = {
+            status: { in: ['PENDING', 'CONFIRMED'] },
+            scheduledAt: {
+                lt: appointmentEnd,
+                gte: appointmentDate
             }
+        };
+
+        // Si hay especialista, validar solo para ese especialista
+        if (specialistId && specialistId !== '0') {
+            overlapWhere.specialistId = specialistId;
+        }
+
+        const overlap = await prisma.appointment.findFirst({
+            where: overlapWhere
         });
 
-        // Una validación más robusta de solapamiento sería ideal aquí, 
-        // pero por brevedad usaremos la lógica básica.
+        if (overlap) {
+            return res.status(400).json({ message: 'Este horario ya no está disponible' });
+        }
 
         const appointment = await prisma.appointment.create({
             data: {
                 userId,
                 serviceId,
+                specialistId: (specialistId && specialistId !== '0') ? specialistId : null,
                 scheduledAt: appointmentDate,
                 notes,
                 status: 'PENDING'
             },
             include: {
-                service: true
+                service: true,
+                specialist: true
             }
         });
 
@@ -143,6 +157,37 @@ export const getMyAppointments = async (req, res, next) => {
         res.json({
             status: 'success',
             data: { appointments }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const deleteAppointment = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+
+        // Verificar que la cita existe y pertenece al usuario
+        const appointment = await prisma.appointment.findUnique({
+            where: { id }
+        });
+
+        if (!appointment) {
+            return res.status(404).json({ message: 'Cita no encontrada' });
+        }
+
+        if (appointment.userId !== userId && req.user.role !== 'ADMIN') {
+            return res.status(403).json({ message: 'No tienes permiso para eliminar esta cita' });
+        }
+
+        await prisma.appointment.delete({
+            where: { id }
+        });
+
+        res.json({
+            status: 'success',
+            message: 'Cita eliminada correctamente'
         });
     } catch (error) {
         next(error);
