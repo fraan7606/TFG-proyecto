@@ -1,0 +1,53 @@
+╔════════════════════════════════════════════════════════════════╗
+║                   ROSTECTIC - SISTEMA DE GESTIÓN              ║
+║                    Proyecto TFG DAM Grado Superior            ║
+╚════════════════════════════════════════════════════════════════╝
+
+INICIO RÁPIDO
+═════════════════════════════════════════════════════════════════
+
+1. EJECUTAR EL PROYECTO
+   ✓ Haz doble clic en: LANZAR_FINAL.bat
+   ✓ Se abrirán automáticamente:
+     - Backend (Node.js) en http://localhost:3000
+     - Frontend (Flutter Web) en http://localhost:5565
+
+2. CREDENCIALES DE ADMIN
+   Email:    admin
+   Password: admin123
+
+3. FUNCIONALIDADES DISPONIBLES
+   ✓ Gestión de Citas
+   ✓ Gestión de Servicios
+   ✓ Gestión de Productos
+   ✓ Gestión de Especialistas
+   ✓ Bloqueo de Horarios
+   ✓ Reportes y Estadísticas
+
+REQUISITOS PREVIOS
+═════════════════════════════════════════════════════════════════
+
+Asegúrate de tener instalado:
+✓ Node.js v18+
+✓ PostgreSQL v14+
+✓ Flutter SDK v3.16+
+✓ Chrome (para la versión web)
+
+DOCUMENTACIÓN COMPLETA
+═════════════════════════════════════════════════════════════════
+
+Para más detalles, consulta: README.md
+
+SOLUCIÓN DE PROBLEMAS
+═════════════════════════════════════════════════════════════════
+
+Si no funciona:
+1. Verifica que PostgreSQL está corriendo
+2. Verifica que Node.js está instalado (node --version)
+3. Verifica que Flutter está instalado (flutter --version)
+4. Cierra Chrome y vuelve a ejecutar LANZAR_FINAL.bat
+
+CONTACTO
+═════════════════════════════════════════════════════════════════
+
+Proyecto desarrollado como TFG para DAM Grado Superior
