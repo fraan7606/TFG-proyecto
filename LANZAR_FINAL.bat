@@ -1,44 +1,56 @@
 @echo off
+chcp 65001 >nul
 cls
-echo ========================================
-echo    LANZANDO ROSTECTIC - VERSION FINAL
-echo ========================================
+echo.
+echo ╔════════════════════════════════════════════════════════════════╗
+echo ║                   ROSTECTIC - SISTEMA DE GESTIÓN              ║
+echo ║                    Proyecto TFG DAM Grado Superior            ║
+echo ╚════════════════════════════════════════════════════════════════╝
 echo.
 
-echo [1/4] Matando procesos existentes...
+echo [1/4] Limpiando procesos previos...
 taskkill /F /IM node.exe 2>nul
 taskkill /F /IM chrome.exe 2>nul
 taskkill /F /IM dart.exe 2>nul
 timeout /t 2 /nobreak >nul
 
-echo [2/4] Iniciando Backend (puerto 3000)...
+echo [2/4] Iniciando Backend (Express + Prisma + PostgreSQL)...
+echo       Puerto: 3000
 cd /d d:\Proyectos\TFG\rostectic-backend
-start "Backend RosTectic" cmd /k "echo Backend iniciando... && npm start"
+start "Backend RosTectic" cmd /k "npm start"
 
-echo [3/4] Esperando 6 segundos...
+echo [3/4] Esperando inicialización del backend...
 timeout /t 6 /nobreak
 
-echo [4/4] Iniciando Frontend (puerto 5565)...
+echo [4/4] Iniciando Frontend (Flutter Web)...
+echo       Puerto: 5565
 cd /d d:\Proyectos\TFG\rostectic-app
-start "Frontend RosTectic" cmd /k "echo Frontend iniciando... && flutter run -d chrome --web-port 5565"
+start "Frontend RosTectic" cmd /k "flutter run -d chrome --web-port 5565"
 
 echo.
-echo ========================================
-echo    PROYECTO LANZADO CORRECTAMENTE
-echo ========================================
+echo ╔════════════════════════════════════════════════════════════════╗
+echo ║                  PROYECTO INICIADO CORRECTAMENTE              ║
+echo ╚════════════════════════════════════════════════════════════════╝
 echo.
-echo Backend:  http://localhost:3000
-echo Frontend: http://localhost:5565
+echo URLs DE ACCESO:
+echo   Backend API:  http://localhost:3000/api
+echo   Frontend:     http://localhost:5565
 echo.
-echo CAMBIOS IMPLEMENTADOS:
-echo   [X] Zona horaria corregida (sin +2 horas)
-echo   [X] Endpoint DELETE de citas agregado
-echo   [X] Boton de borrar citas funcional
-echo   [X] Estado "pending" removido
-echo   [X] Recarga automatica despues de borrar
-echo.
-echo Credenciales:
-echo   Email: admin
+echo CREDENCIALES DE ADMIN:
+echo   Email:    admin
 echo   Password: admin123
+echo.
+echo FUNCIONALIDADES PRINCIPALES:
+echo   ✓ Gestión de Citas (Crear, Ver, Eliminar)
+echo   ✓ Gestión de Servicios (CRUD)
+echo   ✓ Gestión de Productos (CRUD)
+echo   ✓ Gestión de Especialistas (CRUD)
+echo   ✓ Bloqueo de Horarios
+echo   ✓ Reportes y Estadísticas
+echo.
+echo TECNOLOGÍAS:
+echo   Frontend:  Flutter Web
+echo   Backend:   Node.js + Express
+echo   BD:        PostgreSQL + Prisma ORM
 echo.
 pause

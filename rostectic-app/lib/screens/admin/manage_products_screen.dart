@@ -21,31 +21,21 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   }
 
   Future<void> _fetchProducts() async {
-    print('=== INICIANDO CARGA DE PRODUCTOS ===');
     if (mounted) {
       setState(() => _isLoading = true);
     }
     try {
       final response = await _apiService.get(ApiConfig.products);
-      print('Response recibida: ${response.statusCode}');
       final data = _apiService.handleResponse(response);
-      print('Data parseada: $data');
       final products =
           List<Map<String, dynamic>>.from(data['data']['products']);
-      print('Productos cargados: ${products.length}');
-      if (products.isNotEmpty) {
-        print('Primer producto: ${products[0]}');
-      }
       if (mounted) {
         setState(() {
           _products = products;
           _isLoading = false;
         });
-        print('Estado actualizado con ${_products.length} productos');
       }
-    } catch (e, stackTrace) {
-      print('Error cargando productos: $e');
-      print('Stack trace: $stackTrace');
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error cargando productos: $e')),
@@ -134,15 +124,11 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                     final response = await _apiService.post(
                       ApiConfig.products,
                       body,
-                      requiresAuth:
-                          true, // ESTE ERA EL PROBLEMA - faltaba requiresAuth
+                      requiresAuth: true,
                     );
                     final data = _apiService.handleResponse(response);
-                    print('Response data: $data');
                     createdProduct = data['data']['product'];
-                    print('Producto creado: $createdProduct');
                   } catch (e) {
-                    print('Error al crear producto: $e');
                     rethrow;
                   }
                 }
@@ -162,11 +148,8 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                     try {
                       setState(() {
                         _products.add(createdProduct!);
-                        print(
-                            'Producto agregado a la lista. Total: ${_products.length}');
                       });
                     } catch (e) {
-                      print('Error al agregar producto a la lista: $e');
                       // Si falla, recargar la lista completa
                       _fetchProducts();
                     }
@@ -231,7 +214,6 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('BUILD: _isLoading=$_isLoading, productos=${_products.length}');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gestionar Productos'),
@@ -249,7 +231,6 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                     itemCount: _products.length,
                     itemBuilder: (context, index) {
                       final product = _products[index];
-                      print('Renderizando producto $index: ${product['name']}');
                       return Card(
                         margin: const EdgeInsets.only(bottom: 12),
                         child: ListTile(

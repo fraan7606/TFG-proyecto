@@ -90,8 +90,6 @@ class _ManageBlockedSlotsScreenState extends State<ManageBlockedSlotsScreen> {
       endTime = TimeOfDay.fromDateTime(end);
     }
 
-    final reasonController =
-        TextEditingController(text: blockedSlot?['reason'] ?? '');
     String? selectedSpecialistId = blockedSlot?['specialistId'];
 
     final isEditing = blockedSlot != null;
@@ -176,11 +174,6 @@ class _ManageBlockedSlotsScreenState extends State<ManageBlockedSlotsScreen> {
                   },
                 ),
                 const SizedBox(height: 8),
-                TextField(
-                  controller: reasonController,
-                  decoration: const InputDecoration(labelText: 'Razón'),
-                ),
-                const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   value: selectedSpecialistId,
                   decoration: const InputDecoration(
@@ -188,7 +181,7 @@ class _ManageBlockedSlotsScreenState extends State<ManageBlockedSlotsScreen> {
                   items: [
                     const DropdownMenuItem<String>(
                       value: null,
-                      child: Text('Todos los especialistas'),
+                      child: Text('Sin especialista específico'),
                     ),
                     ..._specialists.map((specialist) {
                       return DropdownMenuItem<String>(
@@ -245,7 +238,6 @@ class _ManageBlockedSlotsScreenState extends State<ManageBlockedSlotsScreen> {
                   final body = {
                     'startsAt': startsAt.toIso8601String(),
                     'endsAt': endsAt.toIso8601String(),
-                    'reason': reasonController.text,
                     'specialistId': selectedSpecialistId,
                   };
 
@@ -253,9 +245,14 @@ class _ManageBlockedSlotsScreenState extends State<ManageBlockedSlotsScreen> {
                     await _apiService.put(
                       '${ApiConfig.blockedSlots}/${blockedSlot['id']}',
                       body,
+                      requiresAuth: true,
                     );
                   } else {
-                    await _apiService.post(ApiConfig.blockedSlots, body);
+                    await _apiService.post(
+                      ApiConfig.blockedSlots,
+                      body,
+                      requiresAuth: true,
+                    );
                   }
 
                   if (mounted) {
@@ -308,8 +305,10 @@ class _ManageBlockedSlotsScreenState extends State<ManageBlockedSlotsScreen> {
 
     if (confirmed == true) {
       try {
-        await _apiService
-            .delete('${ApiConfig.blockedSlots}/${blockedSlot['id']}');
+        await _apiService.delete(
+          '${ApiConfig.blockedSlots}/${blockedSlot['id']}',
+          requiresAuth: true,
+        );
         if (mounted) {
           await _fetchBlockedSlots();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -351,7 +350,7 @@ class _ManageBlockedSlotsScreenState extends State<ManageBlockedSlotsScreen> {
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
-                        title: Text(slot['reason'] ?? 'Sin razón'),
+                        title: Text('Horario bloqueado'),
                         subtitle: Text(
                           '${DateFormat('dd/MM/yyyy HH:mm').format(startsAt)} - ${DateFormat('HH:mm').format(endsAt)}\nEspecialista: $specialistName',
                         ),

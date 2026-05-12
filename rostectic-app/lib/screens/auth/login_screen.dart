@@ -14,7 +14,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isEmailLogin = true;
   bool _obscurePassword = true;
 
   @override
@@ -30,17 +29,10 @@ class _LoginScreenState extends State<LoginScreen> {
     final authProvider = context.read<AuthProvider>();
     bool success;
 
-    if (_isEmailLogin) {
-      success = await authProvider.loginWithEmail(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
-    } else {
-      success = await authProvider.loginWithPhone(
-        phone: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
-    }
+    success = await authProvider.loginWithEmail(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
 
     if (success && mounted) {
       Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
@@ -96,48 +88,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 48),
 
-                    // Toggle Email/Phone
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _LoginTypeButton(
-                              label: 'Email',
-                              isSelected: _isEmailLogin,
-                              onTap: () => setState(() => _isEmailLogin = true),
-                            ),
-                          ),
-                          Expanded(
-                            child: _LoginTypeButton(
-                              label: 'Teléfono',
-                              isSelected: !_isEmailLogin,
-                              onTap: () =>
-                                  setState(() => _isEmailLogin = false),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-
-                    // Email/Phone Input
+                    // Email Input
                     TextFormField(
                       controller: _emailController,
-                      keyboardType: _isEmailLogin
-                          ? TextInputType.emailAddress
-                          : TextInputType.phone,
-                      decoration: InputDecoration(
-                        labelText: _isEmailLogin ? 'Email' : 'Teléfono',
-                        prefixIcon: Icon(
-                          _isEmailLogin
-                              ? Icons.email_outlined
-                              : Icons.phone_outlined,
-                        ),
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: Icon(Icons.email_outlined),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -205,73 +162,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                     ),
-                    const SizedBox(height: 24),
-
-                    // Register Link
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '¿No tienes cuenta?',
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, AppRoutes.register);
-                          },
-                          child: const Text('Regístrate'),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _LoginTypeButton extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _LoginTypeButton({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  )
-                ]
-              : null,
-        ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected
-                ? Theme.of(context).colorScheme.primary
-                : Colors.grey[600],
           ),
         ),
       ),

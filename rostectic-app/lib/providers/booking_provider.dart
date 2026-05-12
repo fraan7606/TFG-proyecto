@@ -37,11 +37,7 @@ class BookingProvider with ChangeNotifier {
   }
 
   void _fetchInitialSpecialists() async {
-    // Inicializar con "Cualquiera" siempre disponible
-    _specialists = [
-      Specialist(id: '0', name: 'Cualquiera', role: 'Disponible')
-    ];
-    _selectedSpecialist = _specialists[0];
+    _specialists = [];
     await fetchSpecialists();
   }
 
@@ -75,11 +71,12 @@ class BookingProvider with ChangeNotifier {
                   ))
               .toList();
 
-      // Combinar "Cualquiera" con los de la API
-      _specialists = [
-        Specialist(id: '0', name: 'Cualquiera', role: 'Disponible'),
-        ...apiSpecialists,
-      ];
+      _specialists = apiSpecialists;
+
+      // Seleccionar el primer especialista si hay disponibles
+      if (_specialists.isNotEmpty) {
+        _selectedSpecialist = _specialists[0];
+      }
 
       notifyListeners();
     } catch (e) {
@@ -209,7 +206,7 @@ class BookingProvider with ChangeNotifier {
       final scheduledAtStr = '${dateStr}T$_selectedTime:00';
 
       final notes =
-          'Especialista: ${_selectedSpecialist?.name ?? "Cualquiera"}\n'
+          'Especialista: ${_selectedSpecialist?.name ?? "Sin asignar"}\n'
           'Cliente: $_clientName\n'
           'Teléfono: $_clientPhone';
 

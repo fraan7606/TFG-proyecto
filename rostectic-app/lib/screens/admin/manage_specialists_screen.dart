@@ -37,9 +37,7 @@ class _ManageSpecialistsScreenState extends State<ManageSpecialistsScreen> {
         children: [
           Consumer<BookingProvider>(
             builder: (context, provider, child) {
-              // Filtrar "Cualquiera" para la gestión
-              final list =
-                  provider.specialists.where((s) => s.id != '0').toList();
+              final list = provider.specialists;
 
               if (list.isEmpty) {
                 return const Center(

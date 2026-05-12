@@ -1,10 +1,12 @@
-﻿# RosTectic - Sistema de Gestión de Citas para Salón de Estética
+﻿# RosTecTic - Sistema de Gestión para Salón de Estética
 
-Sistema completo de gestión de citas para salones de estética, desarrollado con Flutter (frontend) y Node.js (backend).
+**Proyecto TFG - DAM Grado Superior**
+
+Sistema completo de gestión de citas, productos y especialistas para salones de estética, desarrollado con Flutter (frontend) y Node.js (backend).
 
 ---
 
-## Índice
+## 📋 Índice
 
 1. [Características](#características)
 2. [Tecnologías Utilizadas](#tecnologías-utilizadas)
@@ -12,19 +14,22 @@ Sistema completo de gestión de citas para salones de estética, desarrollado co
 4. [Estructura del Proyecto](#estructura-del-proyecto)
 5. [Instalación y Configuración](#instalación-y-configuración)
 6. [Guía de Lanzamiento](#guía-de-lanzamiento)
-7. [Verificación](#verificación)
+7. [Credenciales](#credenciales)
+8. [Funcionalidades](#funcionalidades)
 
 ---
 
-## Características
+## ✨ Características
 
--  **Multiplataforma**: Web, Android e iOS con Flutter
--  **Autenticación dual**: Login con email o teléfono
--  **Notificaciones inteligentes**: Email o SMS según método de registro
--  **Gestión de citas**: Calendario interactivo para reservas
--  **Sistema de reseñas**: Valoraciones y comentarios
--  **Gestión de inventario**: Control de productos y stock
--  **Panel de administración**: Estadísticas y gestión completa
+- **Panel de Administración**: Gestión completa del salón
+- **Autenticación Segura**: Login con email y contraseña
+- **Gestión de Citas**: Crear, ver y eliminar citas
+- **Gestión de Servicios**: CRUD completo de servicios
+- **Gestión de Productos**: Control de inventario y stock
+- **Gestión de Especialistas**: Administración de perfiles
+- **Bloqueo de Horarios**: Reservar horarios no disponibles
+- **Reportes**: Estadísticas y análisis del salón
+- **Multiplataforma**: Web, Android e iOS con Flutter
 
 ---
 
@@ -295,9 +300,7 @@ class ApiConfig {
 
 ---
 
-## Guía de Lanzamiento
-
-Tienes **3 opciones** para lanzar el proyecto:
+## 🚀 Guía de Lanzamiento
 
 ### Opción 1: Lanzar Todo Automáticamente (Recomendado) ⚡
 
@@ -305,13 +308,31 @@ Simplemente ejecuta el archivo batch:
 
 ```bash
 # Windows
-ejecutar_todo.bat
+LANZAR_FINAL.bat
 ```
 
 Esto hará:
-1. Abre una ventana para el **Backend** (Node.js en puerto 3000)
-2. Espera 5 segundos
-3. Abre otra ventana para el **Frontend** (Flutter en Chrome)
+1. Limpia procesos previos
+2. Inicia el **Backend** (Node.js + Express en puerto 3000)
+3. Espera a que el backend esté listo
+4. Inicia el **Frontend** (Flutter Web en puerto 5565)
+5. Abre automáticamente en Chrome
+
+**Salida esperada:**
+```
+╔════════════════════════════════════════════════════════════════╗
+║                   ROSTECTIC - SISTEMA DE GESTIÓN              ║
+║                    Proyecto TFG DAM Grado Superior            ║
+╚════════════════════════════════════════════════════════════════╝
+
+URLs DE ACCESO:
+  Backend API:  http://localhost:3000/api
+  Frontend:     http://localhost:5565
+
+CREDENCIALES DE ADMIN:
+  Email:    admin
+  Password: admin123
+```
 
 ### Opción 2: Lanzar Manualmente (Paso a Paso) 🔧
 
@@ -319,53 +340,60 @@ Esto hará:
 
 ```bash
 cd rostectic-backend
-npm run dev
+npm start
 ```
 
-Salida esperada:
+Verás:
 ```
- Servidor RosTectic corriendo en http://localhost:3000
-📝 Entorno: development
+Servidor RosTectic corriendo en http://localhost:3000
 ```
 
 #### Terminal 2 - Frontend (Web)
 
 ```bash
 cd rostectic-app
-flutter run -d chrome
+flutter run -d chrome --web-port 5565
 ```
 
-Salida esperada:
+Verás:
 ```
 Launching lib/main.dart on Chrome in debug mode...
- Built build/web
+Built build/web
 ```
 
-#### Frontend (Móvil - Android)
+---
 
-```bash
-cd rostectic-app
-flutter run -d android
+## 🔐 Credenciales
+
+### Admin (Panel de Control)
+```
+Email:    admin
+Password: admin123
 ```
 
-O para iOS (solo Mac):
+**Acceso**: http://localhost:5565 → Iniciar Sesión
 
-```bash
-flutter run -d ios
-```
+---
 
-### Opción 3: Scripts Individuales 
+## 📱 Funcionalidades
 
-```bash
-# Solo Backend
-ejecutar_backend.bat
+### Panel de Administración (Centro de Control)
+- **Reservar Cita**: Crear nuevas citas manualmente
+- **Citas**: Ver todas las citas del sistema
+- **Servicios**: Crear, editar y eliminar servicios
+- **Productos**: Gestionar inventario y stock
+- **Especialistas**: Administrar perfiles de especialistas
+- **Horarios**: Bloquear horarios no disponibles
+- **Reportes**: Ver estadísticas y análisis
 
-# Solo Frontend (Windows)
-ejecutar_frontend.bat
-
-# Solo Frontend (Web)
-ejecutar_frontend_web.bat
-```
+### Características Técnicas
+- ✅ Autenticación JWT segura
+- ✅ Validación de datos en frontend y backend
+- ✅ Manejo de errores robusto
+- ✅ Interfaz responsive y moderna
+- ✅ Base de datos relacional con Prisma ORM
+- ✅ API REST documentada
+- ✅ Estado management con Provider
 
 ---
 
