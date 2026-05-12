@@ -1,11 +1,10 @@
 @echo off
-chcp 65001 >nul
 cls
 echo.
-echo ╔════════════════════════════════════════════════════════════════╗
-echo ║                   ROSTECTIC - SISTEMA DE GESTIÓN              ║
-echo ║                    Proyecto TFG DAM Grado Superior            ║
-echo ╚════════════════════════════════════════════════════════════════╝
+echo ========================================
+echo    ROSTECTIC - SISTEMA DE GESTION
+echo    Proyecto TFG DAM Grado Superior
+echo ========================================
 echo.
 
 echo [1/4] Limpiando procesos previos...
@@ -19,7 +18,7 @@ echo       Puerto: 3000
 cd /d d:\Proyectos\TFG\rostectic-backend
 start "Backend RosTectic" cmd /k "npm start"
 
-echo [3/4] Esperando inicialización del backend...
+echo [3/4] Esperando inicializacion del backend...
 timeout /t 6 /nobreak
 
 echo [4/4] Iniciando Frontend (Flutter Web)...
@@ -28,9 +27,9 @@ cd /d d:\Proyectos\TFG\rostectic-app
 start "Frontend RosTectic" cmd /k "flutter run -d chrome --web-port 5565"
 
 echo.
-echo ╔════════════════════════════════════════════════════════════════╗
-echo ║                  PROYECTO INICIADO CORRECTAMENTE              ║
-echo ╚════════════════════════════════════════════════════════════════╝
+echo ========================================
+echo    PROYECTO INICIADO CORRECTAMENTE
+echo ========================================
 echo.
 echo URLs DE ACCESO:
 echo   Backend API:  http://localhost:3000/api
@@ -41,14 +40,14 @@ echo   Email:    admin
 echo   Password: admin123
 echo.
 echo FUNCIONALIDADES PRINCIPALES:
-echo   ✓ Gestión de Citas (Crear, Ver, Eliminar)
-echo   ✓ Gestión de Servicios (CRUD)
-echo   ✓ Gestión de Productos (CRUD)
-echo   ✓ Gestión de Especialistas (CRUD)
-echo   ✓ Bloqueo de Horarios
-echo   ✓ Reportes y Estadísticas
+echo   [+] Gestion de Citas (Crear, Ver, Eliminar)
+echo   [+] Gestion de Servicios (CRUD)
+echo   [+] Gestion de Productos (CRUD)
+echo   [+] Gestion de Especialistas (CRUD)
+echo   [+] Bloqueo de Horarios
+echo   [+] Reportes y Estadisticas
 echo.
-echo TECNOLOGÍAS:
+echo TECNOLOGIAS:
 echo   Frontend:  Flutter Web
 echo   Backend:   Node.js + Express
 echo   BD:        PostgreSQL + Prisma ORM

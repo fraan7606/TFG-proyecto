@@ -111,64 +111,105 @@ O bien:
 ## Estructura del Proyecto
 
 ```
-TFG/
+TFG-proyecto/
 ├── rostectic-backend/              # 🔧 Backend API (Node.js + Express)
 │   ├── src/
 │   │   ├── server.js              # Punto de entrada del servidor
-│   │   ├── config/                # Configuraciones (DB, etc)
-│   │   ├── controllers/           # Controladores de rutas
-│   │   ├── middleware/            # Middlewares (autenticación, validación)
-│   │   ├── routes/                # Definición de rutas de la API
-│   │   ├── services/              # Lógica de negocio
-│   │   └── utils/                 # Utilidades (JWT, email, SMS)
+│   │   ├── config/                # Configuraciones (DB)
+│   │   ├── controllers/           # Controladores de rutas (7 archivos)
+│   │   │   ├── appointment.controller.js
+│   │   │   ├── auth.controller.js
+│   │   │   ├── blocked-slot.controller.js
+│   │   │   ├── product.controller.js
+│   │   │   ├── sale.controller.js
+│   │   │   ├── service.controller.js
+│   │   │   └── specialist.controller.js
+│   │   ├── middleware/            # Middlewares (autenticación)
+│   │   ├── routes/                # Definición de rutas de la API (7 archivos)
+│   │   └── utils/                 # Utilidades (JWT)
 │   ├── prisma/
 │   │   ├── schema.prisma          # Definición del esquema de BD
 │   │   ├── migrations/            # Historial de migraciones
-│   │   └── seed.js                # Datos iniciales
+│   │   ├── seed.js                # Datos de prueba
+│   │   └── seed_admin.js          # Usuario admin inicial
 │   ├── package.json               # Dependencias del backend
 │   ├── .env.example               # Ejemplo de variables de entorno
 │   └── .env                       # Variables de entorno (NO commitear)
 │
-├── rostectic-app/                 #  Frontend (Flutter)
+├── rostectic-app/                 # 📱 Frontend (Flutter Web)
 │   ├── lib/
 │   │   ├── main.dart              # Punto de entrada de Flutter
 │   │   ├── config/
 │   │   │   ├── theme.dart         # Tema y estilos
 │   │   │   ├── routes.dart        # Rutas de navegación
 │   │   │   └── api_config.dart    # Configuración de la API
-│   │   ├── models/                # Modelos de datos (User, Appointment, etc)
-│   │   ├── providers/             # Providers para gestión de estado
-│   │   ├── services/              # Servicios (API, Storage, etc)
-│   │   ├── screens/               # Pantallas de la aplicación
-│   │   └── widgets/               # Widgets reutilizables
-│   ├── assets/
-│   │   ├── images/                # Imágenes y logos
-│   │   └── icons/                 # Iconos personalizados
+│   │   ├── models/                # Modelos de datos (3 archivos)
+│   │   ├── providers/             # Providers para gestión de estado (2 archivos)
+│   │   ├── services/              # Servicios (API Service)
+│   │   └── screens/               # Pantallas de la aplicación (14 archivos)
+│   │       ├── auth/              # Login
+│   │       ├── admin/             # Dashboard y gestión (7 pantallas)
+│   │       └── user/              # Pantallas de usuario
 │   ├── pubspec.yaml               # Dependencias de Flutter
 │   ├── android/                   # Configuración Android
 │   ├── ios/                       # Configuración iOS
 │   └── web/                       # Configuración Web
 │
-├── ejecutar_backend.bat           # Script para lanzar solo el backend
-├── ejecutar_frontend.bat          # Script para lanzar solo el frontend
-├── ejecutar_todo.bat              # Script para lanzar todo el proyecto
-└── README.md                      # Este archivo
+├── LANZAR_FINAL.bat               # ⚡ Script para lanzar todo el proyecto
+├── INSTRUCCIONES.txt              # 📄 Guía rápida de inicio
+├── RESUMEN_FINAL.txt              # 📊 Estado completo del proyecto
+└── README.md                      # 📖 Este archivo (documentación completa)
 ```
 
 ---
 
 ## Instalación y Configuración
 
-### Paso 1: Clonar el Repositorio
+> **📌 IMPORTANTE**: Esta guía está diseñada para instalar el proyecto desde cero en cualquier PC.
+
+### Paso 1: Instalar Requisitos Previos
+
+Antes de clonar el proyecto, asegúrate de tener instalado:
+
+#### 1.1. Node.js y npm
+1. Descarga Node.js v18+ desde [https://nodejs.org/](https://nodejs.org/)
+2. Instala el archivo descargado
+3. Verifica la instalación:
+   ```bash
+   node --version  # Debe mostrar v18.x.x o superior
+   npm --version   # Debe mostrar v9.x.x o superior
+   ```
+
+#### 1.2. PostgreSQL
+1. Descarga PostgreSQL v14+ desde [https://www.postgresql.org/download/](https://www.postgresql.org/download/)
+2. Durante la instalación:
+   - Anota la contraseña del usuario `postgres` (la necesitarás después)
+   - Deja el puerto por defecto: 5432
+   - Instala pgAdmin (viene incluido)
+3. Verifica que PostgreSQL esté corriendo
+
+#### 1.3. Flutter SDK
+1. Descarga Flutter desde [https://docs.flutter.dev/get-started/install](https://docs.flutter.dev/get-started/install)
+2. Extrae el archivo en una ubicación (ej: `C:\src\flutter`)
+3. Agrega Flutter al PATH del sistema
+4. Verifica la instalación:
+   ```bash
+   flutter doctor  # Debe mostrar que Flutter está instalado
+   ```
+
+#### 1.4. Google Chrome
+- Descarga e instala Chrome (necesario para Flutter Web)
+
+### Paso 2: Clonar el Repositorio
 
 ```bash
-git clone https://github.com/TU_USUARIO/rostectic.git
-cd TFG
+git clone https://github.com/fraan7606/TFG-proyecto.git
+cd TFG-proyecto
 ```
 
-### Paso 2: Configurar la Base de Datos PostgreSQL
+### Paso 3: Configurar la Base de Datos PostgreSQL
 
-#### 2.1. Crear la Base de Datos
+#### 3.1. Crear la Base de Datos
 
 Abre pgAdmin o usa la terminal de PostgreSQL:
 
@@ -186,7 +227,7 @@ CREATE DATABASE rostectic;
 \q
 ```
 
-#### 2.2. Anotar Credenciales
+#### 3.2. Anotar Credenciales
 
 Necesitarás:
 - **Usuario**: postgres (o tu usuario personalizado)
@@ -195,16 +236,18 @@ Necesitarás:
 - **Puerto**: 5432
 - **Nombre de BD**: rostectic
 
-### Paso 3: Configurar el Backend
+### Paso 4: Configurar el Backend
 
-#### 3.1. Instalar Dependencias
+#### 4.1. Instalar Dependencias
 
 ```bash
 cd rostectic-backend
 npm install
 ```
 
-#### 3.2. Configurar Variables de Entorno
+Este comando instalará todas las dependencias necesarias (Express, Prisma, bcrypt, JWT, etc.).
+
+#### 4.2. Configurar Variables de Entorno
 
 Copia el archivo de ejemplo:
 
@@ -243,40 +286,47 @@ TWILIO_PHONE_NUMBER=+1234567890
 FRONTEND_URL=http://localhost:8080
 ```
 
-** Importante**: 
+**⚠️ IMPORTANTE**: 
 - Cambia `TU_PASSWORD` por tu contraseña real de PostgreSQL
 - Cambia `JWT_SECRET` por una clave segura aleatoria
-- Las credenciales de SendGrid y Twilio son opcionales para empezar
+- Las credenciales de SendGrid y Twilio son opcionales (no necesarias para el TFG)
 
-#### 3.3. Ejecutar Migraciones de la Base de Datos
-
-```bash
-npm run db:migrate
-```
-
-Este comando:
-1. Conecta con PostgreSQL
-2. Crea todas las tablas según el schema de Prisma
-3. Genera el cliente de Prisma para interactuar con la BD
-
-#### 3.4. (Opcional) Poblar con Datos de Prueba
+#### 4.3. Ejecutar Migraciones de la Base de Datos
 
 ```bash
-npm run db:seed
+npx prisma migrate deploy
+npx prisma generate
 ```
 
-### Paso 4: Configurar el Frontend (Flutter)
+Estos comandos:
+1. Conectan con PostgreSQL
+2. Crean todas las tablas según el schema de Prisma
+3. Generan el cliente de Prisma para interactuar con la BD
 
-#### 4.1. Instalar Dependencias
+#### 4.4. Crear Usuario Administrador
+
+```bash
+node prisma/seed_admin.js
+```
+
+Este comando crea el usuario admin con credenciales:
+- Email: `admin`
+- Password: `admin123`
+
+### Paso 5: Configurar el Frontend (Flutter)
+
+#### 5.1. Instalar Dependencias
 
 ```bash
 cd ../rostectic-app
 flutter pub get
 ```
 
-#### 4.2. Configurar URL del Backend
+Este comando instalará todas las dependencias de Flutter (Provider, HTTP, etc.).
 
-Edita el archivo `lib/config/api_config.dart`:
+#### 5.2. Configurar URL del Backend
+
+El archivo `lib/config/api_config.dart` ya está configurado correctamente:
 
 ```dart
 class ApiConfig {
